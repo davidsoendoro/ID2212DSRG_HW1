@@ -1,6 +1,7 @@
 package hangmanclient;
 import java.net.*;
 import java.io.*;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -45,13 +46,13 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabel1.setText("Score:");
 
+        jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabel2.setText("Attempts left:");
 
         jButton1.setText("End Game");
@@ -61,14 +62,10 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
         jLabel3.setText("-----------");
 
-        jLabel4.setText("30");
-
-        jLabel5.setText("10");
-
-        jTextField1.setText("jTextField1");
-
+        jLabel6.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
         jLabel6.setText("Make a guess");
 
         jButton2.setText("Go");
@@ -78,53 +75,34 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setText("jLabel7");
-
-        jButton3.setText("New game");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(60, 60, 60)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addGap(103, 103, 103))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addContainerGap(148, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel3)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(187, 187, 187))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(200, 200, 200)
-                        .addComponent(jLabel3))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2)))
-                .addContainerGap(106, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(72, 72, 72)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(68, 68, 68)
-                        .addComponent(jButton3)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
-                        .addGap(103, 103, 103))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,13 +113,9 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5))
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jButton3))
-                .addGap(21, 21, 21)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
@@ -170,6 +144,7 @@ public class MainWindow extends javax.swing.JFrame {
       wr.println("word="+jTextField1.getText());
       wr.println();
       wr.flush();
+      jTextField1.setText("");
       BufferedReader rd = new BufferedReader(new
           InputStreamReader(cSocket.getInputStream()));
       while ((str = rd.readLine()) != null && !str.trim().equals("")){
@@ -190,13 +165,29 @@ public class MainWindow extends javax.swing.JFrame {
     }
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
-try{
+public void updateState(){
+    int n=-1;
+    if(Integer.parseInt(attempts[1])!=0 && word[1].contains("-")){
+    jLabel4.setText(score[1]);
+    jLabel5.setText(attempts[1]);
+    jLabel3.setText(word[1]);
+    }
+    else if(Integer.parseInt(attempts[1])==0) {
+       Object[] options = {"End game","New word"};
+      n= JOptionPane.showOptionDialog(this, "Sorry! You lost.Correct word: "+ word[1],"Oops",JOptionPane.YES_NO_OPTION,
+      JOptionPane.QUESTION_MESSAGE,null,options,options[1]);
+      
+    }
+    else if(Integer.parseInt(attempts[1])!=0 && !word[1].contains("-")){
+      Object[] options = {"End game","New word"};
+      n= JOptionPane.showOptionDialog(this, "Congratulations! You won.","Bingo",JOptionPane.YES_NO_OPTION,
+      JOptionPane.QUESTION_MESSAGE,null,options,options[1]);
+      System.out.println(n);
+      
+    }
+    if(n==1){
+          try{
            
-       // Socket socket=new Socket(jTextField1.getText(),Integer.parseInt(jTextField2.getText()));
-           // socket.setSoTimeout(10000);
         PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
       wr.println("GET startGame HTTP/1.0");
       wr.println(); wr.flush();
@@ -213,24 +204,16 @@ try{
         word=response_fields[2].split("=");
         
       } 
+      updateState();
       }
         catch (IOException e) {
       System.err.println(e);
-    }        
-// TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
-public void updateState(){
-    if(Integer.parseInt(attempts[1])!=0 && word[1].contains("-")){
-jLabel4.setText(score[1]);
-jLabel5.setText(attempts[1]);
-jLabel3.setText(word[1]);
     }
-    else if(Integer.parseInt(attempts[1])==0 && word[1].contains("-")) {
-       jLabel7.setText("Game Over");
-    }
-    else if(!word[1].contains("-")){
-      jLabel7.setText("Congratulations!");  
-    }
+      }
+    else if(n==0){
+                  this.setVisible(false);
+
+      }
 }
     /**
      * @param args the command line arguments
@@ -250,14 +233,12 @@ public void setWord(String word){
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
