@@ -60,7 +60,7 @@ public class StartWindow extends javax.swing.JFrame {
 
         jLabel3.setText("Server Port");
 
-        jTextField2.setText("80");
+        jTextField2.setText("8080");
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField2ActionPerformed(evt);
@@ -116,8 +116,8 @@ public class StartWindow extends javax.swing.JFrame {
     // TODO add your handling code here:
         try{
            
-       // Socket socket=new Socket(jTextField1.getText(),Integer.parseInt(jTextField2.getText()));
-         socket=new Socket("130.229.171.175",8080);
+       socket=new Socket(jTextField1.getText(),Integer.parseInt(jTextField2.getText()));
+        // socket=new Socket("130.229.171.175",8080);
            // socket.setSoTimeout(10000);
         PrintWriter wr = new PrintWriter(socket.getOutputStream());
       wr.println("GET startGame HTTP/1.0");
