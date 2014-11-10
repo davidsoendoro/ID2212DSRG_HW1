@@ -59,7 +59,12 @@ public class HangmanGame {
         
         for(String parameter : parametersSplit) {
             String[] keyValue = parameter.split("=");
-            parameters.put(keyValue[0], keyValue[1]);
+            if(keyValue.length >= 2) {
+                parameters.put(keyValue[0], keyValue[1]);                
+            }
+            else if(keyValue.length >= 1){
+                parameters.put(keyValue[0], "");
+            }
         }
         
         String param;
@@ -94,12 +99,7 @@ public class HangmanGame {
             }
         }
         else {
-            if(this.attempt == 0) {
-                this.score -= 1;
-            }
-            else {
-                this.attempt -= 1;                
-            }
+            processWrongAnswer();
         }
     }
     
@@ -109,12 +109,7 @@ public class HangmanGame {
             this.score += 1;
         }
         else {
-            if(this.attempt == 0) {
-                this.score -= 1;
-            }
-            else {
-                this.attempt -= 1;                
-            }
+            processWrongAnswer();
         }
     }
     
@@ -133,5 +128,13 @@ public class HangmanGame {
         
         return DictionaryHelper.dictionary.get(randomValue);
 //        return "test";
+    }
+
+    private void processWrongAnswer() {
+        this.attempt -= 1;  
+        if(this.attempt == 0) {
+            if(this.score > 0) this.score -= 1;
+            this.answeredWord = this.word;
+        }
     }
 }
