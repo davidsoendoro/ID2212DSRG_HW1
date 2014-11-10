@@ -12,10 +12,18 @@ package javaserver.handler;
 public class GenericHandler extends Thread {
     
     private final boolean isDebug = true;
+    private final boolean isUsingName = true;
     
     protected void writeOutput(String output) {
+        String printLine;
+        if(isUsingName) {
+            printLine = this.getName() + ": " + output;
+        }
+        else {
+            printLine = output;
+        }
         if(isDebug) {
-            System.out.println(output);
+            System.out.println(printLine);
         }
     }
     

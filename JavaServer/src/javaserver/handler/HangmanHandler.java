@@ -29,9 +29,19 @@ public class HangmanHandler extends GenericHandler {
     
     public HangmanHandler(Socket socket) {
         this.socket = socket;
+        this.initialize();
+    }
+    
+    public HangmanHandler(Socket socket, String threadName) {
+        this.socket = socket;
+        this.initialize();
+        this.setName(threadName);
+    }
+    
+    private final void initialize() {
         this.hangmanGame = null;
         this.isEnded = false;
-        this.disconnectCounter = 0;
+        this.disconnectCounter = 0;        
     }
     
     @Override

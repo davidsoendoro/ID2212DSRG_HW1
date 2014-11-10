@@ -27,6 +27,7 @@ public class JavaServer {
      */
     public static void main(String[] args) {
         int port = 8080;
+        int threadNameCounter = 0;
         
         dictionaryHelper = new DictionaryHelper();
         
@@ -39,7 +40,8 @@ public class JavaServer {
                     Socket clientSocket;
                     clientSocket = serverSocket.accept(); 
                     
-                    HangmanHandler handler = new HangmanHandler(clientSocket);
+                    HangmanHandler handler = new HangmanHandler(clientSocket, 
+                            "Thread-" + ++threadNameCounter);
                     handler.setPriority(handler.getPriority() + 1);
                     handler.start();
                 } catch (SocketException ex) {
