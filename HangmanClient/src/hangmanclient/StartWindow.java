@@ -4,8 +4,11 @@
  * and open the template in the editor.
  */
 package hangmanclient;
+
 import java.net.*;
 import java.io.*;
+import java.util.concurrent.*;
+
 /**
  *
  * @author rohitgoyal
@@ -16,11 +19,9 @@ public class StartWindow extends javax.swing.JFrame {
      * Creates new form StartWindow
      */
     String str;
-    String[] response_fields;
-    String[] score;
-    String[] attempts;
-    String[] word;
     Socket socket;
+    Future future;
+
     public StartWindow() {
         initComponents();
     }
@@ -34,19 +35,19 @@ public class StartWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        startGameButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        ipAddTextField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        portTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Start Game");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        startGameButton.setText("Start Game");
+        startGameButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                startGameButtonActionPerformed(evt);
             }
         });
 
@@ -56,14 +57,14 @@ public class StartWindow extends javax.swing.JFrame {
 
         jLabel2.setText("Server IP");
 
-        jTextField1.setText("127.0.0.1");
+        ipAddTextField.setText("127.0.0.1");
 
         jLabel3.setText("Server Port");
 
-        jTextField2.setText("8080");
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        portTextField.setText("8080");
+        portTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                portTextFieldActionPerformed(evt);
             }
         });
 
@@ -75,7 +76,7 @@ public class StartWindow extends javax.swing.JFrame {
                 .addContainerGap(112, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(startGameButton, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(99, 99, 99))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -87,8 +88,8 @@ public class StartWindow extends javax.swing.JFrame {
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(46, 46, 46)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                    .addComponent(jTextField2))
+                    .addComponent(ipAddTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                    .addComponent(portTextField))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -99,69 +100,72 @@ public class StartWindow extends javax.swing.JFrame {
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ipAddTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(77, 77, 77)
-                .addComponent(jButton1)
+                .addComponent(startGameButton)
                 .addContainerGap(44, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    // TODO add your handling code here:
-        try{
-           
-       socket=new Socket(jTextField1.getText(),Integer.parseInt(jTextField2.getText()));
-        // socket=new Socket("130.229.171.175",8080);
-           // socket.setSoTimeout(10000);
-        PrintWriter wr = new PrintWriter(socket.getOutputStream());
-      wr.println("GET startGame HTTP/1.0");
-      wr.println(); wr.flush();
-      BufferedReader rd = new BufferedReader(new
-          InputStreamReader(socket.getInputStream()));
-      while ((str = rd.readLine()) != null && !str.trim().equals("")){
-        System.out.println(str);
-      }
-      while((str = rd.readLine()) != null && !str.trim().equals("")) {
-        System.out.println(str);
-        response_fields=str.split("&");
-        score=response_fields[0].split("=");
-        attempts=response_fields[1].split("=");
-        word=response_fields[2].split("=");
-        
-      } 
-      }
-        catch (IOException e) {
-      System.err.println(e);
-    }
-        MainWindow mWindow=new MainWindow();
-        mWindow.setCSocket(socket);
-        mWindow.setScore(score[1]);
-        mWindow.setAttempts(attempts[1]);
-        mWindow.setWord(word[1]);
-        mWindow.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void startGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startGameButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        future = executorService.submit(new Callable() {
+            public Object call() throws Exception {
+                try {
+                    socket = new Socket(ipAddTextField.getText(), Integer.parseInt(portTextField.getText()));
+                    // socket=new Socket("130.229.171.175",8080);
+                    PrintWriter wr = new PrintWriter(socket.getOutputStream());
+                    wr.println("GET startGame HTTP/1.0");
+                    wr.println();
+                    wr.flush();
+                    BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    while ((str = rd.readLine()) != null && !str.trim().equals("")) {
+                        System.out.println(str);
+                    }
+                    while ((str = rd.readLine()) != null && !str.trim().equals("")) {
+                        System.out.println(str);
+                        return str;
+                    }
+                } catch (IOException e) {
+                    System.err.println(e);
+                    return "error";
+                }
+                return "error";
+            }
+        });
+        executorService.shutdown();
+        MainWindow mWindow = new MainWindow();
+        mWindow.setFuture(future);
+        mWindow.setCSocket(socket);
+        mWindow.setVisible(true);
+        try {
+            mWindow.readFromFuture();
+        } catch (InterruptedException | ExecutionException s) {
+        }
+
+    }//GEN-LAST:event_startGameButtonActionPerformed
+
+    private void portTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_portTextFieldActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JTextField ipAddTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField portTextField;
+    private javax.swing.JButton startGameButton;
     // End of variables declaration//GEN-END:variables
 }

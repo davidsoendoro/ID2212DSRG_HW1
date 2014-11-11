@@ -1,7 +1,9 @@
 package hangmanclient;
+
 import java.net.*;
 import java.io.*;
 import javax.swing.JOptionPane;
+import java.util.concurrent.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,12 +22,15 @@ public class MainWindow extends javax.swing.JFrame {
     String[] attempts;
     String[] word;
     String str;
+    Future future;
 
     /**
      * Creates new form sWindow
      */
     public MainWindow() {
         initComponents();
+
+       // Thread.currentThread().interrupt();  // set interrupt flag
     }
 
     /**
@@ -37,41 +42,40 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        scoreTextLabel = new javax.swing.JLabel();
+        attemptTextLabel = new javax.swing.JLabel();
+        endGameButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        guessTextField = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        goButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
-        jLabel1.setText("Score:");
+        scoreTextLabel.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        scoreTextLabel.setText("Score:");
 
-        jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
-        jLabel2.setText("Attempts left:");
+        attemptTextLabel.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        attemptTextLabel.setText("Attempts left:");
 
-        jButton1.setText("End Game");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        endGameButton.setText("End Game");
+        endGameButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                endGameButtonActionPerformed(evt);
             }
         });
 
         jLabel3.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
-        jLabel3.setText("-----------");
 
         jLabel6.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
         jLabel6.setText("Make a guess");
 
-        jButton2.setText("Go");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        goButton.setText("Go");
+        goButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                goButtonActionPerformed(evt);
             }
         });
 
@@ -81,17 +85,17 @@ public class MainWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(60, 60, 60)
-                .addComponent(jLabel1)
+                .addComponent(scoreTextLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2)
+                .addComponent(attemptTextLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addGap(103, 103, 103))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(189, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(endGameButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(187, 187, 187))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -99,9 +103,9 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGap(50, 50, 50)
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(guessTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2))
+                        .addComponent(goButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(145, 145, 145)
                         .addComponent(jLabel3)))
@@ -112,154 +116,154 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
+                    .addComponent(scoreTextLabel)
+                    .addComponent(attemptTextLabel)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guessTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(jButton2))
+                    .addComponent(goButton))
                 .addGap(29, 29, 29)
-                .addComponent(jButton1)
+                .addComponent(endGameButton)
                 .addGap(49, 49, 49))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void endGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endGameButtonActionPerformed
         // TODO add your handling code here:
-        try{
-        PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
-      wr.println("GET endGame HTTP/1.0");
-      wr.println();
-      wr.flush();
+        try {
+            PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
+            wr.println("GET endGame HTTP/1.0");
+            wr.println();
+            wr.flush();
+        } catch (IOException e) {
+            System.err.println(e);
         }
-        catch (IOException e) {
-      System.err.println(e);
-    }
         this.setVisible(false);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_endGameButtonActionPerformed
+    public void readFromFuture() throws ExecutionException, InterruptedException {
+        str = future.get().toString();
+        parseString(str);
+    }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    try{
-           
-       // Socket socket=new Socket(jTextField1.getText(),Integer.parseInt(jTextField2.getText()));
-        
-        PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
-      wr.println("POST updateGame HTTP/1.0");
-      wr.println();
-      wr.println("word="+jTextField1.getText());
-      wr.println();
-      wr.flush();
-      jTextField1.setText("");
-      BufferedReader rd = new BufferedReader(new
-          InputStreamReader(cSocket.getInputStream()));
-      while ((str = rd.readLine()) != null && !str.trim().equals("")){
-        System.out.println(str);
+    public void parseString(String newString) {
+        response_fields = newString.split("&");
+        score = response_fields[0].split("=");
+        attempts = response_fields[1].split("=");
+        word = response_fields[2].split("=");
+        updateState();
+    }
+    private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
+        try {
+            PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
+            wr.println("POST updateGame HTTP/1.0");
+            wr.println();
+            wr.println("word=" + guessTextField.getText());
+            wr.println();
+            wr.flush();
+            guessTextField.setText("");
+            BufferedReader rd = new BufferedReader(new InputStreamReader(cSocket.getInputStream()));
+            while ((str = rd.readLine()) != null && !str.trim().equals("")) {
+                System.out.println(str);
 
-      }
-      while ((str = rd.readLine()) != null && !str.trim().equals("")){
-        System.out.println(str);
-        response_fields=str.split("&");
-        score=response_fields[0].split("=");
-        attempts=response_fields[1].split("=");
-        word=response_fields[2].split("=");
-      }
-      updateState();
-      }
-        catch (IOException e) {
-      System.err.println(e);
-    }
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-public void updateState(){
-    int n=-1;
-    if(Integer.parseInt(attempts[1])!=0 && word[1].contains("-")){
-    jLabel4.setText(score[1]);
-    jLabel5.setText(attempts[1]);
-    jLabel3.setText(word[1]);
-    }
-    else if(Integer.parseInt(attempts[1])==0) {
-       Object[] options = {"End game","New word"};
-      n= JOptionPane.showOptionDialog(this, "Sorry! You lost.Correct word: "+ word[1],"Oops",JOptionPane.YES_NO_OPTION,
-      JOptionPane.QUESTION_MESSAGE,null,options,options[1]);
-      
-    }
-    else if(Integer.parseInt(attempts[1])!=0 && !word[1].contains("-")){
-      Object[] options = {"End game","New word"};
-      n= JOptionPane.showOptionDialog(this, "Congratulations! You won.","Bingo",JOptionPane.YES_NO_OPTION,
-      JOptionPane.QUESTION_MESSAGE,null,options,options[1]);
-      System.out.println(n);
-      
-    }
-    if(n==1){
-          try{
-           
-        PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
-      wr.println("GET startGame HTTP/1.0");
-      wr.println(); wr.flush();
-      BufferedReader rd = new BufferedReader(new
-          InputStreamReader(cSocket.getInputStream()));
-      while ((str = rd.readLine()) != null && !str.trim().equals("")){
-        System.out.println(str);
-      }
-      while((str = rd.readLine()) != null && !str.trim().equals("")) {
-        System.out.println(str);
-        response_fields=str.split("&");
-        score=response_fields[0].split("=");
-        attempts=response_fields[1].split("=");
-        word=response_fields[2].split("=");
-        
-      } 
-      updateState();
-      }
-        catch (IOException e) {
-      System.err.println(e);
-    }
-      }
-    else if(n==0){
-        try{
-        PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
-      wr.println("GET endGame HTTP/1.0");
-      wr.println();
-      wr.flush();
+            }
+            while ((str = rd.readLine()) != null && !str.trim().equals("")) {
+                System.out.println(str);
+                parseString(str);
+            }
+        } catch (IOException e) {
+            System.err.println(e);
         }
-        catch (IOException e) {
-      System.err.println(e);
-    }
-       this.setVisible(false);
+        // TODO add your handling code here:
+    }//GEN-LAST:event_goButtonActionPerformed
+    public void updateState() {
+        int n = -1;
+        if (Integer.parseInt(attempts[1]) != 0 && word[1].contains("-")) {
+            jLabel4.setText(score[1]);
+            jLabel5.setText(attempts[1]);
+            jLabel3.setText(word[1]);
+        } else if (Integer.parseInt(attempts[1]) == 0) {
+            Object[] options = {"End game", "New word"};
+            n = JOptionPane.showOptionDialog(this, "Sorry! You lost.Correct word: " + word[1], "Oops", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 
-      }
-}
+        } else if (Integer.parseInt(attempts[1]) != 0 && !word[1].contains("-")) {
+            Object[] options = {"End game", "New word"};
+            n = JOptionPane.showOptionDialog(this, "Congratulations! You won.", "Bingo", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            System.out.println(n);
+
+        }
+        if (n == 1) {
+            try {
+
+                PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
+                wr.println("GET startGame HTTP/1.0");
+                wr.println();
+                wr.flush();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(cSocket.getInputStream()));
+                while ((str = rd.readLine()) != null && !str.trim().equals("")) {
+                    System.out.println(str);
+                }
+                while ((str = rd.readLine()) != null && !str.trim().equals("")) {
+                    System.out.println(str);
+                    parseString(str);
+                }
+            } catch (IOException e) {
+                System.err.println(e);
+            }
+        } else if (n == 0) {
+            try {
+                PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
+                wr.println("GET endGame HTTP/1.0");
+                wr.println();
+                wr.flush();
+            } catch (IOException e) {
+                System.err.println(e);
+            }
+            this.setVisible(false);
+
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
-public void setCSocket(Socket socket){
-    cSocket=socket;
-}
-public void setScore(String score){
-    jLabel4.setText(score);
-}
-public void setAttempts(String attempts){
-    jLabel5.setText(attempts);
-}
-public void setWord(String word){
-    jLabel3.setText(word);
-}
+    public void setCSocket(Socket socket) {
+        cSocket = socket;
+    }
+
+    public void setScore(String score) {
+        jLabel4.setText(score);
+    }
+
+    public void setAttempts(String attempts) {
+        jLabel5.setText(attempts);
+    }
+
+    public void setWord(String word) {
+        jLabel3.setText(word);
+    }
+
+    public void setFuture(Future future) {
+        this.future = future;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel attemptTextLabel;
+    private javax.swing.JButton endGameButton;
+    private javax.swing.JButton goButton;
+    private javax.swing.JTextField guessTextField;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel scoreTextLabel;
     // End of variables declaration//GEN-END:variables
 }
