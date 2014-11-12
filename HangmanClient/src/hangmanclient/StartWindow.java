@@ -20,7 +20,8 @@ public class StartWindow extends javax.swing.JFrame {
      */
     String str;
     Socket socket;
-    Future future;
+    //Future future;
+    MainWindow mWindow;
 
     public StartWindow() {
         initComponents();
@@ -115,43 +116,23 @@ public class StartWindow extends javax.swing.JFrame {
 
     private void startGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startGameButtonActionPerformed
         // TODO add your handling code here:
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        future = executorService.submit(new Callable() {
-            public Object call() throws Exception {
-                try {
-                    socket = new Socket(ipAddTextField.getText(), Integer.parseInt(portTextField.getText()));
-                    // socket=new Socket("130.229.171.175",8080);
-                    PrintWriter wr = new PrintWriter(socket.getOutputStream());
-                    wr.println("GET startGame HTTP/1.0");
-                    wr.println();
-                    wr.flush();
-                    BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    while ((str = rd.readLine()) != null && !str.trim().equals("")) {
-                        System.out.println(str);
-                    }
-                    while ((str = rd.readLine()) != null && !str.trim().equals("")) {
-                        System.out.println(str);
-                        return str;
-                    }
-                } catch (IOException e) {
-                    System.err.println(e);
-                    return "error";
-                }
-                return "error";
-            }
-        });
-        executorService.shutdown();
-        MainWindow mWindow = new MainWindow();
-        mWindow.setFuture(future);
-        mWindow.setCSocket(socket);
+        mWindow=null;
+        ConnectionThread cThread=new ConnectionThread(ipAddTextField.getText(),portTextField.getText());
+        cThread.setCaller(this);
+        new Thread(cThread).start();
+        mWindow = new MainWindow();
+      //  mWindow.setCSocket(socket);
+        mWindow.setCThread(cThread);
         mWindow.setVisible(true);
-        try {
-            mWindow.readFromFuture();
-        } catch (InterruptedException | ExecutionException s) {
-        }
-
     }//GEN-LAST:event_startGameButtonActionPerformed
 
+    
+    public void didReceiveResponse(String s){
+        while(mWindow==null || !mWindow.isShowing())
+        {
+        }
+        mWindow.parseString(s);
+    }
     private void portTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_portTextFieldActionPerformed

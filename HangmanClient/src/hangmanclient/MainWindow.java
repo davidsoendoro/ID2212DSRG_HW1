@@ -16,13 +16,13 @@ import java.util.concurrent.*;
  */
 public class MainWindow extends javax.swing.JFrame {
 
-    Socket cSocket;
     String[] response_fields;
     String[] score;
     String[] attempts;
     String[] word;
     String str;
-    Future future;
+    ConnectionThread cThread;
+    int popUpFlag=-1;
 
     /**
      * Creates new form sWindow
@@ -137,20 +137,19 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void endGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endGameButtonActionPerformed
         // TODO add your handling code here:
-        try {
+        cThread.setRequestParam("endGame");
+        /*try {
             PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
             wr.println("GET endGame HTTP/1.0");
             wr.println();
             wr.flush();
         } catch (IOException e) {
             System.err.println(e);
-        }
+        }*/
+        new Thread(cThread).start();
         this.setVisible(false);
     }//GEN-LAST:event_endGameButtonActionPerformed
-    public void readFromFuture() throws ExecutionException, InterruptedException {
-        str = future.get().toString();
-        parseString(str);
-    }
+
 
     public void parseString(String newString) {
         response_fields = newString.split("&");
@@ -160,7 +159,11 @@ public class MainWindow extends javax.swing.JFrame {
         updateState();
     }
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
-        try {
+        cThread.setRequestParam(guessTextField.getText());
+        cThread.setCaller(this);
+        new Thread(cThread).start();
+        guessTextField.setText("");
+        /*try {
             PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
             wr.println("POST updateGame HTTP/1.0");
             wr.println();
@@ -179,29 +182,39 @@ public class MainWindow extends javax.swing.JFrame {
             }
         } catch (IOException e) {
             System.err.println(e);
-        }
+        }*/
         // TODO add your handling code here:
     }//GEN-LAST:event_goButtonActionPerformed
+    
+    public void didReceiveResponse1(String s){
+        str=s;
+        parseString(str);
+    }
+    
     public void updateState() {
-        int n = -1;
+        System.out.println("ss");
         if (Integer.parseInt(attempts[1]) != 0 && word[1].contains("-")) {
             jLabel4.setText(score[1]);
             jLabel5.setText(attempts[1]);
             jLabel3.setText(word[1]);
+            System.out.println("e"+jLabel3.getText());
+
         } else if (Integer.parseInt(attempts[1]) == 0) {
             Object[] options = {"End game", "New word"};
-            n = JOptionPane.showOptionDialog(this, "Sorry! You lost.Correct word: " + word[1], "Oops", JOptionPane.YES_NO_OPTION,
+            popUpFlag = JOptionPane.showOptionDialog(this, "Sorry! You lost.Correct word: " + word[1], "Oops", JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 
         } else if (Integer.parseInt(attempts[1]) != 0 && !word[1].contains("-")) {
             Object[] options = {"End game", "New word"};
-            n = JOptionPane.showOptionDialog(this, "Congratulations! You won.", "Bingo", JOptionPane.YES_NO_OPTION,
+            popUpFlag = JOptionPane.showOptionDialog(this, "Congratulations! You won.", "Bingo", JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-            System.out.println(n);
 
         }
-        if (n == 1) {
-            try {
+        checkGameStatus();
+    }
+    public void checkGameStatus(){
+        if (popUpFlag == 1) {
+           /* try {
 
                 PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
                 wr.println("GET startGame HTTP/1.0");
@@ -217,27 +230,31 @@ public class MainWindow extends javax.swing.JFrame {
                 }
             } catch (IOException e) {
                 System.err.println(e);
-            }
-        } else if (n == 0) {
-            try {
+            }*/
+            popUpFlag=-1;
+        cThread.setRequestParam("startGame");
+        cThread.setCaller(this);
+        new Thread(cThread).start();
+        
+        } else if (popUpFlag == 0) {
+            /*try {
                 PrintWriter wr = new PrintWriter(cSocket.getOutputStream());
                 wr.println("GET endGame HTTP/1.0");
                 wr.println();
                 wr.flush();
             } catch (IOException e) {
                 System.err.println(e);
-            }
+            }*/
+            popUpFlag=-1;
+            cThread.setRequestParam("endGame");
+            new Thread(cThread).start();
             this.setVisible(false);
 
         }
     }
-
     /**
      * @param args the command line arguments
      */
-    public void setCSocket(Socket socket) {
-        cSocket = socket;
-    }
 
     public void setScore(String score) {
         jLabel4.setText(score);
@@ -251,10 +268,9 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel3.setText(word);
     }
 
-    public void setFuture(Future future) {
-        this.future = future;
+    public void setCThread(ConnectionThread c){
+        cThread=c;
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel attemptTextLabel;
     private javax.swing.JButton endGameButton;
