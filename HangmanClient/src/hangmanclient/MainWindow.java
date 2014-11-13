@@ -232,7 +232,7 @@ public class MainWindow extends javax.swing.JFrame {
                 System.err.println(e);
             }*/
             popUpFlag=-1;
-        cThread.setRequestParam("startGame");
+        cThread.setRequestParam("startGameObj");
         cThread.setCaller(this);
         new Thread(cThread).start();
         
