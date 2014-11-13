@@ -14,7 +14,7 @@ import java.net.Socket;
  *
  * @author rohitgoyal
  */
-public class ConnectionThread implements Runnable{
+public class ConnectionThread extends Thread{
     Socket socket;
     String serverIP;
     String serverPort;
@@ -49,10 +49,11 @@ public class ConnectionThread implements Runnable{
                     }
                     while ((str = rd.readLine()) != null && !str.trim().equals("")) {
                         System.out.println(str);
-                        ((StartWindow)this.caller).didReceiveResponse(str);
+                        ((StartWindow)this.caller).parseString(str);
                     }
-                } catch (IOException e) {
+                } catch (IOException |NumberFormatException e) {
                     System.err.println(e);
+                    ((StartWindow)this.caller).parseString("Error"+e);
                 }
         }
         else{
@@ -63,6 +64,12 @@ public class ConnectionThread implements Runnable{
             wr.println();
             wr.flush();
             isConnected=false;
+            BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    while ((str = rd.readLine()) != null && !str.trim().equals("")) {
+                        System.out.println(str);
+                        ((StartWindow)this.caller).parseString(str);
+                    }
+            
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -79,7 +86,7 @@ public class ConnectionThread implements Runnable{
                     }
                     while ((str = rd.readLine()) != null && !str.trim().equals("")) {
                         System.out.println(str);
-                        ((MainWindow)this.caller).didReceiveResponse1(str);
+                        ((StartWindow)this.caller).didReceiveResponse(str);
                     }
                 } catch (IOException e) {
                     System.err.println(e);
@@ -101,7 +108,7 @@ public class ConnectionThread implements Runnable{
             }
             while ((str = rd.readLine()) != null && !str.trim().equals("")) {
                 System.out.println(str);
-                ((MainWindow)this.caller).didReceiveResponse1(str);
+                ((StartWindow)this.caller).didReceiveResponse(str);
             }
         }
             catch(IOException i){
