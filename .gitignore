@@ -1,2 +1,4 @@
 /HangmanClient/dist/
 *.class
+
+HangmanClient/build/classes/hangmanclient/StartWindow$5.class
