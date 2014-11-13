@@ -5,9 +5,8 @@
  */
 package hangmanclient;
 
-import java.net.*;
-import java.io.*;
-import java.util.concurrent.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -19,12 +18,24 @@ public class StartWindow extends javax.swing.JFrame {
      * Creates new form StartWindow
      */
     String str;
-    Socket socket;
-    //Future future;
-    MainWindow mWindow;
+    String[] response_fields;
+    String[] score;
+    String[] attempts;
+    String[] word;
+    ConnectionThread cThread;
+    int popUpFlag = -1;
 
     public StartWindow() {
         initComponents();
+        /* Java does not have function to disable/enable all components in a panel
+         So, did it indivudually
+         */
+        goButton.setEnabled(false);
+        endButton.setEnabled(false);
+        guessTextField.setEnabled(false);
+        ipAddTextField.setEnabled(true);
+        portTextField.setEnabled(true);
+        startGameButton.setEnabled(true);
     }
 
     /**
@@ -36,36 +47,115 @@ public class StartWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
-        startGameButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        bottomPanel = new javax.swing.JPanel();
+        jL1 = new javax.swing.JLabel();
+        scoreLabel = new javax.swing.JLabel();
+        jL2 = new javax.swing.JLabel();
+        attemptLabel = new javax.swing.JLabel();
+        wordLabel = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        guessTextField = new javax.swing.JTextField();
+        goButton = new javax.swing.JButton();
+        endButton = new javax.swing.JButton();
+        topPanel = new javax.swing.JPanel();
+        iPLabel = new javax.swing.JLabel();
         ipAddTextField = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
+        portLabel = new javax.swing.JLabel();
         portTextField = new javax.swing.JTextField();
+        startGameButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
 
-        jScrollPane1.setViewportView(jTextPane1);
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        startGameButton.setText("Start Game");
-        startGameButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                startGameButtonActionPerformed(evt);
-            }
-        });
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         jLabel1.setText("Play Hangman");
         jLabel1.setPreferredSize(new java.awt.Dimension(60, 30));
 
-        jLabel2.setText("Server IP");
+        bottomPanel.setEnabled(false);
+
+        jL1.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        jL1.setText("Score :");
+
+        jL2.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        jL2.setText("Attempts:");
+
+        wordLabel.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
+
+        jLabel9.setText("Make a guess");
+
+        goButton.setText("Go");
+        goButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                goButtonActionPerformed(evt);
+            }
+        });
+
+        endButton.setText("End");
+        endButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                endButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
+        bottomPanel.setLayout(bottomPanelLayout);
+        bottomPanelLayout.setHorizontalGroup(
+            bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bottomPanelLayout.createSequentialGroup()
+                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bottomPanelLayout.createSequentialGroup()
+                        .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(bottomPanelLayout.createSequentialGroup()
+                                .addGap(17, 17, 17)
+                                .addComponent(jL1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, bottomPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(bottomPanelLayout.createSequentialGroup()
+                                .addComponent(guessTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(goButton))
+                            .addGroup(bottomPanelLayout.createSequentialGroup()
+                                .addComponent(scoreLabel)
+                                .addGap(88, 88, 88)
+                                .addComponent(jL2)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(endButton)
+                            .addComponent(attemptLabel)))
+                    .addGroup(bottomPanelLayout.createSequentialGroup()
+                        .addGap(74, 74, 74)
+                        .addComponent(wordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(15, Short.MAX_VALUE))
+        );
+        bottomPanelLayout.setVerticalGroup(
+            bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bottomPanelLayout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jL1)
+                    .addComponent(scoreLabel)
+                    .addComponent(jL2)
+                    .addComponent(attemptLabel))
+                .addGap(29, 29, 29)
+                .addComponent(wordLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(guessTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(goButton)
+                    .addComponent(endButton))
+                .addContainerGap(40, Short.MAX_VALUE))
+        );
+
+        iPLabel.setText("Server IP");
 
         ipAddTextField.setText("127.0.0.1");
 
-        jLabel3.setText("Server Port");
+        portLabel.setText("Server Port");
 
         portTextField.setText("8080");
         portTextField.addActionListener(new java.awt.event.ActionListener() {
@@ -74,93 +164,243 @@ public class StartWindow extends javax.swing.JFrame {
             }
         });
 
+        startGameButton.setText("Start Game");
+        startGameButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startGameButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
+        topPanel.setLayout(topPanelLayout);
+        topPanelLayout.setHorizontalGroup(
+            topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(topPanelLayout.createSequentialGroup()
+                .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(topPanelLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(iPLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(topPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(portLabel)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ipAddTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(47, 47, 47)
+                .addComponent(startGameButton, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(99, Short.MAX_VALUE))
+        );
+        topPanelLayout.setVerticalGroup(
+            topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(topPanelLayout.createSequentialGroup()
+                .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(topPanelLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(iPLabel)
+                            .addComponent(ipAddTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(portLabel)
+                            .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(topPanelLayout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(startGameButton)))
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(112, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(startGameButton, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(99, 99, 99))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(108, 108, 108))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                        .addGap(195, 195, 195))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(46, 46, 46)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(ipAddTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                            .addComponent(portTextField)))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jSeparator1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 50, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(topPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(59, 59, 59)))))
+                        .addGap(41, 41, 41))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(ipAddTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
-                .addComponent(startGameButton)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(topPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /* 
+     Start new thread on startGame action listener
+     Pass a reference of this object to thread so that
+     it can return result in a callback function
+     */
     private void startGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startGameButtonActionPerformed
-        // TODO add your handling code here:
-        mWindow=null;
-        ConnectionThread cThread=new ConnectionThread(ipAddTextField.getText(),portTextField.getText());
+
+        cThread = new ConnectionThread(ipAddTextField.getText(), portTextField.getText());
         cThread.setCaller(this);
-        cThread.setRequestParam("startGameObj");
-        new Thread(cThread).start();
-        mWindow = new MainWindow();
-      //  mWindow.setCSocket(socket);
-        mWindow.setCThread(cThread);
-        mWindow.setVisible(true);
+        Thread t = new Thread(cThread);
+        t.start();
     }//GEN-LAST:event_startGameButtonActionPerformed
 
-    
-    public void didReceiveResponse(String s){
-        while(mWindow==null || !mWindow.isShowing())
-        {
+    /*
+     parseString is used as callback from connection thread and takes the string as parameter.
+     */
+    public void parseString(final String newString) {
+
+        if (newString.startsWith("score")) {            //thread returns string like score=abc&attempts=.. on success
+            response_fields = newString.split("&");
+            score = response_fields[0].split("=");
+            attempts = response_fields[1].split("=");
+            word = response_fields[2].split("=");
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    updateState();
+                }
+            });
+        } //thread returns 200 Ok on endGame
+        else if (newString.startsWith("200")) {
+            System.out.println("endGame");
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    scoreLabel.setText("0");
+                    attemptLabel.setText("0");
+                    wordLabel.setText("");
+                    goButton.setEnabled(false);
+                    endButton.setEnabled(false);
+                    guessTextField.setEnabled(false);
+                    ipAddTextField.setEnabled(true);
+                    portTextField.setEnabled(true);
+                    startGameButton.setEnabled(true);
+                }
+            });
+        } //thread returns error message if something goes wrong
+        else {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(null, newString);
+                }
+            });
+
         }
-        mWindow.parseString(s);
+
+    }
+
+    /*
+     Once parsestring parses string, it updates class local variables. The UI is updated
+     in updateState function using main UI thread.
+     */
+    public void updateState() {
+        goButton.setEnabled(true);
+        endButton.setEnabled(true);
+        guessTextField.setEnabled(true);
+        ipAddTextField.setEnabled(false);
+        portTextField.setEnabled(false);
+        startGameButton.setEnabled(false);
+        if (Integer.parseInt(attempts[1]) != 0 && word[1].contains("-")) {
+            scoreLabel.setText(score[1]);
+            attemptLabel.setText(attempts[1]);
+            wordLabel.setText(word[1]);
+        } else if (Integer.parseInt(attempts[1]) == 0) {
+            Object[] options = {"End game", "New word"};
+            popUpFlag = JOptionPane.showOptionDialog(this, "Sorry! You lost.Correct word: " + word[1], "Oops", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+
+        } else if (Integer.parseInt(attempts[1]) != 0 && !word[1].contains("-")) {
+            Object[] options = {"End game", "New word"};
+            popUpFlag = JOptionPane.showOptionDialog(this, "Congratulations! You won.", "Bingo", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+
+        }
+        checkGameStatus();
+    }
+    /*
+     updateState method could present a pop up to user which is handled in checkGameStatus method.
+     Depending on index of buttons in pop window, action is performed.
+    
+     */
+
+    public void checkGameStatus() {
+        if (popUpFlag == 1) {
+            popUpFlag = -1;
+            cThread.setRequestParam("startGame");
+            cThread.setCaller(this);
+            new Thread(cThread).start();
+
+        } else if (popUpFlag == 0) {
+
+            popUpFlag = -1;
+            cThread.setRequestParam("endGame");
+            new Thread(cThread).start();
+
+        }
     }
     private void portTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_portTextFieldActionPerformed
+
+    /*
+     This method below is action listener for end game button on main screen
+     */
+    private void endButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endButtonActionPerformed
+        cThread.setRequestParam("endGame");
+        new Thread(cThread).start();
+    }//GEN-LAST:event_endButtonActionPerformed
+
+    /*
+     The method below is action listener for Go button on main screen. It passes the word in textfield
+     to the thread parameter (requestParam).
+     */
+    private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
+        cThread.setRequestParam(guessTextField.getText());
+        new Thread(cThread).start();
+        guessTextField.setText("");
+    }//GEN-LAST:event_goButtonActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel attemptLabel;
+    private javax.swing.JPanel bottomPanel;
+    private javax.swing.JButton endButton;
+    private javax.swing.JButton goButton;
+    private javax.swing.JTextField guessTextField;
+    private javax.swing.JLabel iPLabel;
     private javax.swing.JTextField ipAddTextField;
+    private javax.swing.JLabel jL1;
+    private javax.swing.JLabel jL2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JLabel portLabel;
     private javax.swing.JTextField portTextField;
+    private javax.swing.JLabel scoreLabel;
     private javax.swing.JButton startGameButton;
+    private javax.swing.JPanel topPanel;
+    private javax.swing.JLabel wordLabel;
     // End of variables declaration//GEN-END:variables
 }
