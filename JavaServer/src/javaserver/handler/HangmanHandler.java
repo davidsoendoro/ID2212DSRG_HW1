@@ -8,11 +8,14 @@ package javaserver.handler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javaserver.hangman.HangmanGame;
+import common.hangman.model.HangmanObject;
 
 /**
  *
@@ -38,7 +41,7 @@ public class HangmanHandler extends GenericHandler {
         this.setName(threadName);
     }
     
-    private final void initialize() {
+    private void initialize() {
         this.hangmanGame = null;
         this.isEnded = false;
         this.disconnectCounter = 0;        
@@ -46,6 +49,27 @@ public class HangmanHandler extends GenericHandler {
     
     @Override
     public void run() {
+//        readObject();
+        readString();
+    }
+    
+    private void readObject() {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            
+            Object incomingObject = ois.readObject();
+            if(incomingObject.getClass() == HangmanObject.class) {
+                HangmanObject request = (HangmanObject) incomingObject;
+                if(request.getCommand().equals("startGameObj")) {
+                    startGameObj();
+                }
+            }
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(HangmanHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }       
+    }
+    
+    private void readString() {
         try {
             int i = 0;
             BufferedReader rd = new BufferedReader(new InputStreamReader(
@@ -102,9 +126,7 @@ public class HangmanHandler extends GenericHandler {
                 socket.close();               
                 writeOutput("Thread is closed!");
             }
-        } catch (IOException ex) {
-            Logger.getLogger(HangmanHandler.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
+        } catch (IOException | InterruptedException ex) {
             Logger.getLogger(HangmanHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if(printWriter != null) {
@@ -114,7 +136,10 @@ public class HangmanHandler extends GenericHandler {
     }
 
     private void executeAPI(String str, String parametersString) {
-        if(str.contains("startGame")) {
+        if(str.contains("startGameObj")) {
+            startGameObj();
+        }
+        else if(str.contains("startGame")) {
             startGame();
         }
         else if(str.contains("endGame")) {
@@ -125,6 +150,19 @@ public class HangmanHandler extends GenericHandler {
         }
     }
 
+    private void startGameObj() {
+        ObjectOutputStream oos = null;
+        try {
+            HangmanObject hangmanObject = new HangmanObject("startGameObj", 0, 
+                    10, "Hello");
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            
+            oos.writeObject(hangmanObject);
+        } catch (IOException ex) {
+            Logger.getLogger(HangmanHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     /**
      * Handler that will be called if server receives "startGame" message
      * If it is the start of the game it will initialize hangmanGame
