@@ -86,7 +86,7 @@ public class ConnectionThread extends Thread{
                     }
                     while ((str = rd.readLine()) != null && !str.trim().equals("")) {
                         System.out.println(str);
-                        ((StartWindow)this.caller).didReceiveResponse(str);
+                        ((StartWindow)this.caller).parseString(str);
                     }
                 } catch (IOException e) {
                     System.err.println(e);
@@ -108,7 +108,7 @@ public class ConnectionThread extends Thread{
             }
             while ((str = rd.readLine()) != null && !str.trim().equals("")) {
                 System.out.println(str);
-                ((StartWindow)this.caller).didReceiveResponse(str);
+                ((StartWindow)this.caller).parseString(str);
             }
         }
             catch(IOException i){

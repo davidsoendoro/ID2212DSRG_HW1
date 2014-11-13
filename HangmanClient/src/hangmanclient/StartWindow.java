@@ -30,6 +30,9 @@ public class StartWindow extends javax.swing.JFrame {
 
     public StartWindow() {
         initComponents();
+        /* Java does not have function to disable/enable all components in a panel
+        So, did it indivudually
+        */
         goButton.setEnabled(false);
         endButton.setEnabled(false);
         guessTextField.setEnabled(false);
@@ -250,7 +253,10 @@ public class StartWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startGameButtonActionPerformed
-        // TODO add your handling code here:
+        /* Start new thread on startGame action listener
+        Pass a reference of this object to thread so that
+        it can return result in a callback function
+        */
         cThread=new ConnectionThread(ipAddTextField.getText(),portTextField.getText());
         cThread.setCaller(this);
         Thread t=new Thread(cThread);
@@ -258,12 +264,11 @@ public class StartWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_startGameButtonActionPerformed
 
     
-    public void didReceiveResponse(String s){
-        topPanel.setEnabled(false);
-        parseString(s);
-    }
-    
+    /*
+    parseString is used as callback from connection thread and takes the string as parameter.
+    */
     public void parseString(final String newString) {
+        //thread returns string like score=abc&attempts=.. on success
         if(newString.startsWith("score")){
         response_fields = newString.split("&");
         score = response_fields[0].split("=");
@@ -275,6 +280,7 @@ public class StartWindow extends javax.swing.JFrame {
                 }
                 });
     }
+        //thread returns 200 Ok on endGame 
         else if(newString.startsWith("200")){
             System.out.println("endGame");
             SwingUtilities.invokeLater(new Runnable(){
@@ -291,6 +297,7 @@ public class StartWindow extends javax.swing.JFrame {
                 }
                 });
         }
+        //thread returns error message if something goes wrong
         else {
             SwingUtilities.invokeLater(new Runnable(){
                 public void run(){
@@ -301,6 +308,11 @@ public class StartWindow extends javax.swing.JFrame {
         }
             
     }
+    
+    /*
+    Once parsestring parses string, it updates class local variables. The UI is updated
+    in updateState function using main UI thread.
+    */
     public void updateState() {
         goButton.setEnabled(true);
         endButton.setEnabled(true);
@@ -325,6 +337,11 @@ public class StartWindow extends javax.swing.JFrame {
         }
         checkGameStatus();
     }
+    /*
+    updateState method could present a pop up to user which is handled in checkGameStatus method.
+    Depending on index of buttons in pop window, action is performed.
+    
+    */
     public void checkGameStatus(){
         if (popUpFlag == 1) {
             popUpFlag=-1;
@@ -344,18 +361,22 @@ public class StartWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_portTextFieldActionPerformed
 
+    /*
+    This method below is action listener for end game button on main screen
+    */
     private void endButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endButtonActionPerformed
         cThread.setRequestParam("endGame");
         new Thread(cThread).start();
-        bottomPanel.setEnabled(false);
     }//GEN-LAST:event_endButtonActionPerformed
 
+    /*
+    The method below is action listener for Go button on main screen. It passes the word in textfield
+    to the thread parameter (requestParam).
+    */
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         cThread.setRequestParam(guessTextField.getText());
-        cThread.setCaller(this);
         new Thread(cThread).start();
-        bottomPanel.setEnabled(false);
-        guessTextField.setText("");        // TODO add your handling code here:
+        guessTextField.setText("");    
     }//GEN-LAST:event_goButtonActionPerformed
 
     /**
